@@ -99,7 +99,7 @@ do
   vim.g.maplocalleader = ' '
 
   -- Set to true if you have a Nerd Font installed and selected in the terminal
-  vim.g.have_nerd_font = false
+  vim.g.have_nerd_font = true
 
   -- [[ Setting options ]]
   --  See `:help vim.o`
@@ -692,6 +692,8 @@ do
   --  See `:help lsp-config` for information about keys and how to configure
   ---@type table<string, vim.lsp.Config>
   local servers = {
+    ruff = {},
+    ty = {},
     -- clangd = {},
     -- gopls = {},
     -- pyright = {},
@@ -800,6 +802,7 @@ do
     -- You can also specify external formatters in here.
     formatters_by_ft = {
       -- rust = { 'rustfmt' },
+      python = { "ruff" }
       -- Conform can also run multiple formatters sequentially
       -- python = { "isort", "black" },
       --
