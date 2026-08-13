@@ -125,6 +125,12 @@ do
   -- Enable break indent
   vim.o.breakindent = true
 
+  -- Other default indent settings
+  vim.o.expandtab = true
+  vim.o.shiftwidth = 4
+  vim.o.tabstop = 4
+  vim.o.softtabstop = -1
+
   -- Enable undo/redo changes even after closing and reopening a file
   vim.o.undofile = true
 
