@@ -244,6 +244,29 @@ do
   -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
   -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
+  -- MacOS-style movements from GPT 5.6
+  local function imap(lhs, rhs, desc) vim.keymap.set('i', lhs, rhs, { desc = desc }) end
+
+  -- Ghostty sends Option-Left/Right as Alt-B/F.
+  -- Map the arrow forms too, for GUIs and other terminals.
+  for _, lhs in ipairs { '<M-Left>', '<M-b>' } do
+    imap(lhs, '<C-g>u<C-o>b', 'Move to previous word')
+  end
+
+  for _, lhs in ipairs { '<M-Right>', '<M-f>' } do
+    imap(lhs, '<C-g>u<C-o>e<Right>', 'Move to end of next word')
+  end
+
+  imap('<M-BS>', '<C-g>u<C-w>', 'Delete previous word')
+
+  -- Ghostty sends Command-Left/Right/Delete as Ctrl-A/E/U.
+  imap('<C-a>', '<C-g>u<C-o>0', 'Move to beginning of line')
+  imap('<C-e>', '<C-g>u<C-o>$', 'Move to end of line')
+  imap('<C-u>', '<C-g>u<C-o>"_d0', 'Delete to beginning of line')
+
+  -- Delete without cutting (GPT 5.6)
+  vim.keymap.set({ 'n', 'x' }, '<leader>d', '"_d', { desc = '[D]elete without copying' })
+
   -- [[ Basic Autocommands ]]
   --  See `:help lua-guide-autocommands`
 
@@ -694,18 +717,6 @@ do
   local servers = {
     ruff = {},
     ty = {},
-    -- clangd = {},
-    -- gopls = {},
-    -- pyright = {},
-    -- rust_analyzer = {},
-    --
-    -- Some languages (like typescript) have entire language plugins that can be useful:
-    --    https://github.com/pmizio/typescript-tools.nvim
-    --
-    -- But for many setups, the LSP (`ts_ls`) will work just fine
-    -- ts_ls = {},
-
-    stylua = {}, -- Used to format Lua code
 
     -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
@@ -764,6 +775,7 @@ do
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
     'prettierd',
+    'stylua',
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -808,6 +820,7 @@ do
       python = { 'ruff_format' },
       markdown = { 'prettierd' },
       html = { 'prettierd' },
+      lua = { 'stylua' },
     },
   }
 
@@ -889,7 +902,7 @@ do
     -- the rust implementation via `'prefer_rust_with_warning'`
     --
     -- See `:help blink-cmp-config-fuzzy` for more information
-    fuzzy = { implementation = 'lua' },
+    fuzzy = { implementation = 'prefer_rust_with_warning' },
 
     -- Shows a signature help window while you type arguments for a function
     signature = { enabled = true },
